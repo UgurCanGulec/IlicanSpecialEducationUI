@@ -5,13 +5,16 @@ module.exports = {
   ],
   theme: {
     extend: {
-      extend: {
-        fontFamily: {
-          "primary": ['Inter', 'sans-serif']
-        }
+      screens: {
+        'sm': '480px',  
+        'md': '1100px',  
+        'lg': '1200px', 
+        'xl': '1280px',
+      },
+      fontFamily: {
+        "primary": ['Inter', 'sans-serif'],
       }
     },
   },
   plugins: [],
 }
-
