@@ -76,7 +76,7 @@ const EmployeeSlider = ({ employees }) => {
                 />
 
                 <img
-                  src={`/images/${employee.pictureUrl}`}
+                  src={`${employee.pictureUrl}`}
                   alt={employee.nameSurname}
                   className="w-32 h-32 object-cover rounded-full mx-auto mb-6"
                 />
