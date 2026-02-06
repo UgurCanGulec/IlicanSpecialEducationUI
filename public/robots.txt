@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://xn--lcanzeleitim-7ib29ceib.com/sitemap.xml

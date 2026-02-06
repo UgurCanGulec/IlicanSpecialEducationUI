@@ -9,7 +9,7 @@ const About = () => {
   const galleryImages = [center, center2, center3, center4];
 
   return (
-    <div className="relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImage})` }}>
+    <div className="relative bg-cover bg-center bg-no-repeat pt-24" style={{ backgroundImage: `url(${bgImage})` }}>
       <div className="absolute inset-0 bg-black/70"></div>
       <div className="relative max-w-7xl mx-auto py-16 sm:px-4 md:px-6 lg:px-8 text-white">
         <div className="text-center mb-12 px-4">
@@ -35,26 +35,29 @@ const About = () => {
             ))}
           </div>
           <div className="mt-8 lg:mt-0 text-center lg:text-left">
-            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold tracking-wide mb-6">
-              Neden Ilıcan Eğitim?
+            <h2 className="text-3xl sm:text-4xl lg:text-4xl font-extrabold tracking-wide mb-6">
+              Neden Ilıcan Özel Eğitim?
             </h2>
             <p className="text-lg font-semibold mb-4 text-yellow-400">GELECEĞE UMUTLA BAKMAK İÇİN</p>
             <p className="text-gray-300 text-base sm:text-lg mb-6 leading-relaxed">
               Geleceğimiz "Çocuklarımızın" gelişimine katkıda bulunmak için Ilıcan Özel Eğitim & Rehabilitasyon
-              Merkezi, siz velilerimiz ile birlikte en iyi yol haritasını belirlemektedir.
+              Merkezi, siz velilerimiz ve alanında uzman eğitim kadromuz ile birlikte en iyi yol haritasını belirlemektedir.
             </p>
             <ul className="text-base sm:text-lg space-y-3">
               <li className="border-l-4 border-yellow-400 pl-3 font-medium transition-all duration-300 hover:text-yellow-300">
-                YAYGIN GELİŞİMSEL BOZUKLUK
-              </li>
-              <li className="border-l-4 border-yellow-400 pl-3 font-medium transition-all duration-300 hover:text-yellow-300">
-                ÖZEL ÖĞRENME GÜÇLÜĞÜ
+                DİL VE KONUŞMA BOZUKLUĞU OLAN BİREYLER İÇİN DESTEK EĞİTİMİ
               </li>
               <li className="border-l-4 border-yellow-400 pl-3 font-medium transition-all duration-300 hover:text-yellow-300">
                 ZİHİNSEL ENGELLİLER DESTEK EĞİTİMİ
               </li>
               <li className="border-l-4 border-yellow-400 pl-3 font-medium transition-all duration-300 hover:text-yellow-300">
+                YAYGIN GELİŞİMSEL BOZUKLUK
+              </li>
+              <li className="border-l-4 border-yellow-400 pl-3 font-medium transition-all duration-300 hover:text-yellow-300">
                 BEDENSEL YETERSİZLİK EĞİTİMİ
+              </li>
+              <li className="border-l-4 border-yellow-400 pl-3 font-medium transition-all duration-300 hover:text-yellow-300">
+                ÖZEL ÖĞRENME GÜÇLÜĞÜ
               </li>
             </ul>
           </div>

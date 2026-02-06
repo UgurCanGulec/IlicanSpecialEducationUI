@@ -48,8 +48,8 @@ const Navbar = () => {
         }`}
     >
       <nav className="px-6 py-4 max-w-7xl mx-auto flex justify-between items-center">
-        <a href="/" className="text-xl font-bold text-white">
-          Ilıcan <span className="text-orange-400">Özel</span> Eğitim Merkezi
+        <a href="/" className="text-lg font-bold text-white">
+          Özel Ilıcan<span className="text-orange-400"> Özel Eğitim</span> ve Rehabilitasyon Merkezi
         </a>
 
         <ul className="hidden md:flex gap-10 text-base">  {/* lg -> md */}
@@ -87,7 +87,7 @@ const Navbar = () => {
             Oturum Aç
           </button>
 
-          <div className="md:hidden">  
+          <div className="md:hidden">
             <button onClick={toggleMenu}>
               {isMenuOpen ? (
                 <FaXmark className="w-6 h-6" />
@@ -101,7 +101,7 @@ const Navbar = () => {
 
       <ul
         className={`md:hidden bg-white text-black text-base space-y-4 px-6 py-6 transition-all duration-300 ease-in-out ${isMenuOpen ? 'fixed top-16 left-0 w-full z-40' : 'hidden'
-          }`} 
+          }`}
       >
         {navItems.map(({ path, link }) => (
           <li key={path}>
