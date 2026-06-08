@@ -107,7 +107,19 @@ const EmployeeOperation = () => {
           }
           formData.append("employee.nameSurname", selectedEmployee.nameSurname);
           formData.append("employee.title", selectedEmployee.title);
-          formData.append("employee.hireDate", selectedEmployee.hireDate);
+
+          if (selectedEmployee.hireDate) {
+            const rawDate = new Date(selectedEmployee.hireDate);
+            const year = rawDate.getFullYear();
+            const month = String(rawDate.getMonth() + 1).padStart(2, '0');
+            const day = String(rawDate.getDate()).padStart(2, '0');
+
+            const formattedLocalDate = `${year}-${month}-${day}`;
+            formData.append("employee.hireDate", formattedLocalDate);
+          } else {
+            formData.append("employee.hireDate", "");
+          }
+
           formData.append("employee.email", selectedEmployee.email);
           formData.append("employee.description", selectedEmployee.description);
 
