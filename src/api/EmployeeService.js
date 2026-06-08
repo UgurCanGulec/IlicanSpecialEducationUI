@@ -3,7 +3,6 @@ import { API_BASE_URL } from "./ApiConstants"
 
 export default class EmployeeService {
 
-
     static async getAllEmployees() {
         try {
             const response = await axios.get(`${API_BASE_URL}/employee/all`)
@@ -13,11 +12,14 @@ export default class EmployeeService {
         }
     }
 
-    static async addEmployee(request, token) {
+    static async addEmployee(formData, token) {
         try {
-            const response = await axios.post(`${API_BASE_URL}/employee/add`, request,
+            const response = await axios.post(`${API_BASE_URL}/employee/add`, formData,
                 {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
                 })
             return response.data
         } catch (err) {
@@ -37,11 +39,14 @@ export default class EmployeeService {
         }
     }
 
-    static async updateEmployee(request, token) {
+    static async updateEmployee(formData, token) {
         try {
-            const response = await axios.put(`${API_BASE_URL}/employee/update`, request,
+            const response = await axios.put(`${API_BASE_URL}/employee/update`, formData,
                 {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
                 })
             return response.data
         } catch (err) {

@@ -3,7 +3,6 @@ import { API_BASE_URL } from "./ApiConstants"
 
 export default class PostService {
 
-
     static async getAllPosts() {
         try {
             const response = await axios.get(`${API_BASE_URL}/post/all`)
@@ -13,11 +12,14 @@ export default class PostService {
         }
     }
 
-    static async addPost(request, token) {
+    static async addPost(formData, token) {
         try {
-            const response = await axios.post(`${API_BASE_URL}/post/add`, request,
+            const response = await axios.post(`${API_BASE_URL}/post/add`, formData,
                 {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data"
+                    }
                 })
             return response.data
         } catch (err) {
@@ -37,11 +39,14 @@ export default class PostService {
         }
     }
 
-    static async updatePost(request, token) {
+    static async updatePost(formData, token) {
         try {
-            const response = await axios.put(`${API_BASE_URL}/post/update`, request,
+            const response = await axios.put(`${API_BASE_URL}/post/update`, formData,
                 {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data"
+                    }
                 })
             return response.data
         } catch (err) {
