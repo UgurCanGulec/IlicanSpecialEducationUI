@@ -7,7 +7,11 @@ import { toast, ToastContainer } from 'react-toastify';
 import { validateBeforeEmployeeSave } from '../../util/ApplicationUtil';
 
 const EmployeeOperation = () => {
-  const [employees, setEmployees] = useState([]);
+  const [employees, setEmployees] = useState(() => {
+    const cachedEmployees = localStorage.getItem('cached_employees');
+    return cachedEmployees ? JSON.parse(cachedEmployees) : [];
+  });
+
   const [selectedEmployee, setSelectedEmployee] = useState({
     id: '',
     nameSurname: '',
@@ -26,8 +30,25 @@ const EmployeeOperation = () => {
   }, []);
 
   const getAllEmployees = async () => {
-    const result = await EmployeeService.getAllEmployees();
-    setEmployees(result.data.employees);
+    try {
+      const result = await EmployeeService.getAllEmployees();
+      if (result && result.data && result.data.employees) {
+        const freshEmployees = result.data.employees;
+        setEmployees(freshEmployees);
+        localStorage.setItem('cached_employees', JSON.stringify(freshEmployees));
+      }
+    } catch (error) {
+      console.warn("Backend uykuda veya yanıt vermiyor, önbellekteki personel verileri korunuyor.", error);
+
+      const cached = localStorage.getItem('cached_employees');
+      if (!cached || JSON.parse(cached).length === 0) {
+        toast.info('Ekran verileri getiriliyor...', {
+          position: 'top-center',
+          autoClose: 6000,
+          theme: 'colored'
+        });
+      }
+    }
   };
 
   const cardUpdateOnClick = (id) => {
@@ -43,18 +64,18 @@ const EmployeeOperation = () => {
       const token = localStorage.getItem('token');
       const isAuthenticated = localStorage.getItem('isAuthenticated');
       if (isAuthenticated && token) {
-        const result = await EmployeeService.removeEmployeeById(id, token);
-        if (result) {
-          toast.success('Seçilen personelin kaydı başarılı olarak kaldırılmıştır.', {
-            position: 'top-center',
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            theme: 'colored',
-          });
-          getAllEmployees();
+        try {
+          const result = await EmployeeService.removeEmployeeById(id, token);
+          if (result) {
+            toast.success('Seçilen personelin kaydı başarılı olarak kaldırılmıştır.', {
+              position: 'top-center',
+              autoClose: 2000,
+              theme: 'colored',
+            });
+            getAllEmployees();
+          }
+        } catch (error) {
+          toast.error('Silme işlemi sırasında bir hata oluştu.', { position: 'top-center' });
         }
       }
     }
@@ -101,7 +122,13 @@ const EmployeeOperation = () => {
             result = await EmployeeService.addEmployee(formData, token);
           }
 
-          if (result) {
+          if (result && result.success === false) {
+            toast.error(result.message || 'İşlem gerçekleştirilemedi.', {
+              position: 'top-center',
+              autoClose: 4000,
+              theme: 'colored',
+            });
+          } else if (result) {
             toast.success('Kaydetme işlemi başarılı olarak tamamlanmıştır.', {
               position: 'top-center',
               autoClose: 2000,
@@ -115,7 +142,8 @@ const EmployeeOperation = () => {
         }
       } catch (error) {
         console.error('Güncelleme hatası:', error);
-        alert('Güncelleme sırasında bir hata oluştu.');
+        const errorMsg = error.response?.data?.message || 'Güncelleme sırasında bir hata oluştu.';
+        toast.error(errorMsg, { position: 'top-center', autoClose: 3000 });
       }
     } else {
       toast.error('Lütfen zorunlu alanları doldurunuz.', { autoClose: 2000 });
@@ -134,7 +162,7 @@ const EmployeeOperation = () => {
     });
     setSelectedFile(null);
     setPreviewUrl('');
-    // Input elemanını DOM üzerinden de sıfırlamak için (isteğe bağlı)
+
     const fileInput = document.getElementById('pictureFile');
     if (fileInput) fileInput.value = '';
   };
@@ -146,6 +174,7 @@ const EmployeeOperation = () => {
       [name]: value,
     }));
   };
+
   return (
       <div className="container mx-auto p-6">
         <ToastContainer />
@@ -165,7 +194,9 @@ const EmployeeOperation = () => {
         </div>
 
         <div className="mt-6 p-4 border rounded-lg bg-white shadow-md">
-          <h2 className="text-xl font-semibold mb-3">Personel Bilgilerini Güncelle</h2>
+          <h2 className="text-xl font-semibold mb-3">
+            {selectedEmployee.id ? 'Personel Bilgilerini Güncelle' : 'Yeni Personel Ekle'}
+          </h2>
 
           <div className="mb-4">
             <label htmlFor="id" className="block text-sm font-medium text-gray-700">
@@ -209,25 +240,27 @@ const EmployeeOperation = () => {
             />
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="pictureFile" className="block text-sm font-medium text-gray-700">
-              Personel Resmi Seç
-            </label>
-            <input
-                id="pictureFile"
-                name="pictureFile"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-            />
+          <div className="mb-4 flex items-center space-x-6">
+            <div className="flex-1">
+              <label htmlFor="pictureFile" className="block text-sm font-medium text-gray-700">
+                Personel Resmi Seç
+              </label>
+              <input
+                  id="pictureFile"
+                  name="pictureFile"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"
+              />
+            </div>
             {previewUrl && (
-                <div className="mt-2">
-                  <p className="text-xs text-gray-500 mb-1">Resim Önizleme:</p>
+                <div className="flex flex-col items-center pt-5">
+                  <span className="text-xs text-gray-500 mb-1">Resim Önizleme</span>
                   <img
                       src={previewUrl}
                       alt="Önizleme"
-                      className="h-24 w-24 object-cover rounded-full border-2 border-gray-300 shadow-sm"
+                      className="h-20 w-20 object-cover rounded-full border-2 border-green-500 shadow-md"
                   />
                 </div>
             )}
@@ -269,7 +302,7 @@ const EmployeeOperation = () => {
                 value={selectedEmployee.description}
                 onChange={handleInputChange}
                 rows="4"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md resize-none"
             />
           </div>
 
@@ -284,7 +317,7 @@ const EmployeeOperation = () => {
                 onClick={handleSave}
                 className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
             >
-              Kaydet
+              {selectedEmployee.id ? 'Güncelle' : 'Kaydet'}
             </button>
           </div>
         </div>

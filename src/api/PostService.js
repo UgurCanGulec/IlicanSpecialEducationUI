@@ -5,7 +5,7 @@ export default class PostService {
 
     static async getAllPosts() {
         try {
-            const response = await axios.get(`${API_BASE_URL}/post/all`)
+            const response = await axios.get(`${API_BASE_URL}/post/all`, { timeout: 10000 })
             return response.data
         } catch (err) {
             throw err;

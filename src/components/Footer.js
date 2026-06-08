@@ -57,7 +57,7 @@ const Footer = () => {
             </div>
             <div className='flex flex-col justify-between pt-5 pb-10 border-t border-gray-800 sm:flex-row mt-5'>
                 <p className='text-sm text-gray-500'>Developed by: Uğur Can Güleç</p>
-                <p className='text-sm text-gray-500'>© Copyrights 2024 Ilıcan Özel Eğitim | Tüm Hakları Saklıdır.</p>
+                <p className='text-sm text-gray-500'>© Copyrights 2026 Ilıcan Özel Eğitim | Tüm Hakları Saklıdır.</p>
                 <div className='flex items-center mt-4 space-x-4 sm:mt-0'>
                     <a href='' className='text-gray-500 transition-all duration-300 hover:text-orange-500'><FaTwitter className='h-6 w-6' /></a>
                     <a href='' className='text-gray-500 transition-all duration-300 hover:text-orange-500'><FaFacebook className='h-6 w-6' /></a>

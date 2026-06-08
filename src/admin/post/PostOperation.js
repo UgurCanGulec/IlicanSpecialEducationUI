@@ -5,7 +5,11 @@ import { ToastContainer, toast } from 'react-toastify'
 import { validateBeforePostSave } from '../../util/ApplicationUtil'
 
 const PostOperation = () => {
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState(() => {
+    const cachedPosts = localStorage.getItem('cached_posts')
+    return cachedPosts ? JSON.parse(cachedPosts) : []
+  })
+
   const [selectedPost, setSelectedPost] = useState({
     id: '',
     title: '',
@@ -26,8 +30,24 @@ const PostOperation = () => {
   }, [])
 
   const getAllPosts = async () => {
-    const result = await PostService.getAllPosts()
-    setPosts(result.data.posts)
+    try {
+      const result = await PostService.getAllPosts()
+      if (result && result.data && result.data.posts) {
+        const freshPosts = result.data.posts
+        setPosts(freshPosts)
+        localStorage.setItem('cached_posts', JSON.stringify(freshPosts))
+      }
+    } catch (error) {
+      console.warn("Backend uykuda veya yanıt vermiyor, önbellekteki veriler korunuyor.", error);
+      const cached = localStorage.getItem('cached_posts')
+      if (!cached || JSON.parse(cached).length === 0) {
+        toast.info('Ekran verileri getiriliyor...', {
+          position: 'top-center',
+          autoClose: 6000,
+          theme: 'colored'
+        });
+      }
+    }
   }
 
   const cardUpdateOnClick = (id) => {
@@ -44,18 +64,18 @@ const PostOperation = () => {
       const token = localStorage.getItem('token')
       const isAuthenticated = localStorage.getItem('isAuthenticated')
       if (isAuthenticated && token) {
-        const result = await PostService.removePostById(id, token)
-        if (result) {
-          toast.success('Seçilen gönderi başarılı olarak kaldırılmıştır.', {
-            position: 'top-center',
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            theme: 'colored',
-          });
-          getAllPosts()
+        try {
+          const result = await PostService.removePostById(id, token)
+          if (result) {
+            toast.success('Seçilen gönderi başarılı olarak kaldırılmıştır.', {
+              position: 'top-center',
+              autoClose: 2000,
+              theme: 'colored',
+            });
+            getAllPosts()
+          }
+        } catch (error) {
+          toast.error('Silme işlemi sırasında bir hata oluştu.', { position: 'top-center' });
         }
       }
     }
@@ -100,8 +120,13 @@ const PostOperation = () => {
           } else {
             result = await PostService.addPost(formData, token)
           }
-
-          if (result) {
+          if (result && result.success === false) {
+            toast.error(result.message || 'İşlem gerçekleştirilemedi.', {
+              position: 'top-center',
+              autoClose: 4000,
+              theme: 'colored',
+            });
+          } else if (result) {
             toast.success('Kaydetme işlemi başarılı olarak tamamlanmıştır.', {
               position: 'top-center',
               autoClose: 2000,
@@ -115,7 +140,8 @@ const PostOperation = () => {
         }
       } catch (error) {
         console.error('Güncelleme hatası:', error);
-        alert('Güncelleme sırasında bir hata oluştu.');
+        const errorMsg = error.response?.data?.message || 'Güncelleme sırasında bir hata oluştu.';
+        toast.error(errorMsg, { position: 'top-center', autoClose: 3000 });
       }
     } else {
       toast.error('Lütfen zorunlu alanları doldurunuz.', { autoClose: 2000 });
